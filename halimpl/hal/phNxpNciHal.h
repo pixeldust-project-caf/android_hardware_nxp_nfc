@@ -18,6 +18,7 @@
 
 #include <hardware/nfc.h>
 #include <phNxpNciHal_utils.h>
+#include "NxpNfcCapability.h"
 
 /********************* Definitions and structures *****************************/
 #define MAX_RETRY_COUNT 5
@@ -35,8 +36,6 @@ typedef void(phNxpNciHal_control_granted_callback_t)();
 #define FW_MOBILE_ROM_VERSION_PN551 0x10
 #define FW_MOBILE_ROM_VERSION_PN553 0x11
 #define FW_MOBILE_ROM_VERSION_PN557 0x12
-#define FW_MOBILE_ROM_VERSION_PN548AD 0x10
-#define FW_MOBILE_ROM_VERSION_PN547C2 0x08
 /* NCI Data */
 
 #define NCI_MT_CMD 0x20
@@ -49,7 +48,6 @@ typedef void(phNxpNciHal_control_granted_callback_t)();
 #define NCI_MSG_CORE_INIT 0x01
 #define NCI_MT_MASK 0xE0
 #define NCI_OID_MASK 0x3F
-#define NXP_NFC_CHIP_PN81T
 
 #define NXP_MAX_CONFIG_STRING_LEN 260
 
@@ -129,6 +127,7 @@ typedef struct phNxpNciHal_Control {
 
   /* to store and restore gpio values */
   phNxpNciGpioInfo_t phNxpNciGpioInfo;
+  bool bIsForceFwDwnld;
 } phNxpNciHal_Control_t;
 
 typedef struct phNxpNciClock {
@@ -167,6 +166,7 @@ typedef struct phNxpNciProfile_Control {
 #define NCI_HAL_POST_INIT_CPLT_MSG 0x413
 #define NCI_HAL_PRE_DISCOVER_CPLT_MSG 0x414
 #define NCI_HAL_ERROR_MSG 0x415
+#define NCI_HAL_HCI_NETWORK_RESET_MSG 0x416
 #define NCI_HAL_RX_MSG 0xF01
 
 #define NCIHAL_CMD_CODE_LEN_BYTE_OFFSET (2U)
@@ -177,8 +177,13 @@ int phNxpNciHal_check_ncicmd_write_window(uint16_t cmd_len, uint8_t* p_cmd);
 void phNxpNciHal_request_control(void);
 void phNxpNciHal_release_control(void);
 int phNxpNciHal_write_unlocked(uint16_t data_len, const uint8_t* p_data);
-#if (NFC_NXP_CHIP_TYPE == PN548C2)
-NFCSTATUS phNxpNciHal_core_reset_recovery();
-void phNxpNciHal_discovery_cmd_ext(uint8_t* p_cmd_data, uint16_t cmd_len);
-#endif
+/*******************************************************************************
+**
+** Function         phNxpNciHal_configFeatureList
+**
+** Description      Configures the featureList based on chip type
+
+** Returns          none
+*******************************************************************************/
+void phNxpNciHal_configFeatureList(uint8_t* init_rsp, uint16_t rsp_len);
 #endif /* _PHNXPNCIHAL_H_ */
