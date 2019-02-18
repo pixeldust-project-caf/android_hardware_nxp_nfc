@@ -18,11 +18,11 @@ cc_library_shared {
     proprietary: true,
 
     cflags: [
-        "-DNFC_NXP_CHIP_TYPE=PN557",
-        "-DPN557=1",
         "-Wall",
         "-Werror",
         "-Wextra",
+        // Allow implicit fallthroughs in phDnldNfc_Internal.cc and phNxpConfig.cpp until they are fixed.
+        "-Wno-error=implicit-fallthrough",
     ],
 
     srcs: [
@@ -42,6 +42,7 @@ cc_library_shared {
         "halimpl/tml/phTmlNfc.cc",
         "halimpl/tml/phTmlNfc_i2c.cc",
         "halimpl/tml/spi_spm.cc",
+        "halimpl/utils/NxpNfcCapability.cpp",
         "halimpl/utils/phNxpConfig.cpp",
         "halimpl/utils/phNxpNciHal_utils.cc",
         "halimpl/utils/sparse_crc32.cc",
